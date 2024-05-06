@@ -1,24 +1,21 @@
 from fastapi import FastAPI
 from app.config import QR_DIRECTORY
-from app.routers import qr_code, oauth  # Make sure these imports match your project structure.
+from app.routers import qr_code, oauth  # Ensure these imports match your project structure.
 from app.services.qr_service import create_directory
 from app.utils.common import setup_logging
 
-# This function sets up logging based on the configuration specified in your logging configuration file.
-# It's important for monitoring and debugging.
+# Set up logging based on the configuration file.
 setup_logging()
 
-# This ensures that the directory for storing QR codes exists when the application starts.
-# If it doesn't exist, it will be created.
+# Ensure the directory for storing QR codes is created at startup if it doesn't exist.
 create_directory(QR_DIRECTORY)
 
-# This creates an instance of the FastAPI application.
+# Create an instance of FastAPI with specified metadata.
 app = FastAPI(
     title="QR Code Manager",
-    description="A FastAPI application for creating, listing available codes, and deleting QR codes. "
-                "It also supports OAuth for secure access.",
+    description="A FastAPI application for creating, listing, and deleting QR codes, with secure OAuth access.",
     version="0.0.1",
-        redoc_url=None,
+    redoc_url=None,  # Disable Redoc documentation
     contact={
         "name": "API Support",
         "url": "http://www.example.com/support",
@@ -28,10 +25,8 @@ app = FastAPI(
         "name": "Apache 2.0",
         "url": "https://www.apache.org/licenses/LICENSE-2.0.html",
     }
-
 )
 
-# Here, we include the routers for our application. Routers define the paths and operations your API provides.
-# We have two routers in this case: one for managing QR codes and another for handling OAuth authentication.
-app.include_router(qr_code.ruter)  # QR code management routes
-app.include_router(oauth.router)  # OAuth authentication routes
+# Include routers for QR code management and OAuth authentication.
+app.include_router(qr_code.router)  # Managing QR codes
+app.include_router(oauth.router)  # OAuth authentication

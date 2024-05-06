@@ -12,4 +12,5 @@ async def client():
 async def get_access_token_for_test(client):
     form_data = {"username": "admin", "password": "secret"}
     response = await client.post("/token", data=form_data)
+    assert response.status_code == 200, "Failed to retrieve access token"
     return response.json()["access_token"]

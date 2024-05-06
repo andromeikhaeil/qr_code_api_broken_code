@@ -1,44 +1,27 @@
-# Load environment variables
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+import logging
 
-# The dotenv package is used to load environment variables from a .env file
-# into the environment for this script. This is useful for keeping secrets out of source code.
 load_dotenv()
 
-# Environment Variables for Configuration
+def get_env_variable(var_name, default_value):
+    value = os.getenv(var_name, default_value)
+    if value == default_value:
+        logging.warning(f"{var_name} is not set. Using default value: {value}")
+    return value
 
-# QR_DIRECTORY specifies the directory where QR codes are saved.
-# If not specified in the environment, it defaults to './qr_codes'.
-QR_DIRECTORY = Path(os.getenv('QR_CODE_DIR', './qr_codes'))
+QR_DIRECTORY = Path(get_env_variable('QR_CODE_DIR', './qr_codes'))
+if not QR_DIRECTORY.exists():
+    QR_DIRECTORY.mkdir(parents=True, exist_ok=True)
+    logging.info(f"Created directory at {QR_DIRECTORY}")
 
-# FILL_COLOR determines the color of the QR code itself. Defaults to 'red'.
-FILL_COLOR = os.getenv('FILL_COLOR', 'red')
-
-# BACK_COLOR sets the background color of the QR code. Defaults to 'white'.
-BACK_COLOR = os.getenv('BACK_COLOR', 'white')
-
-# SERVER_BASE_URL is the base URL for the server. This might be used for constructing
-# URLs in responses. Defaults to 'http://localhost:80'.
-SERVER_BASE_URL = os.getenv('SERVER_BASE_URL', 'http://localhost:80')
-
-# SERVER_DOWNLOAD_FOLDER specifies the directory exposed by the server for downloads,
-# such as QR codes. This could be a path routed by your server for static files.
-SERVER_DOWNLOAD_FOLDER = os.getenv('SERVER_DOWNLOAD_FOLDER', 'downloads')
-
-# SECRET_KEY is used in cryptographic operations, such as signing JWT tokens. 
-# It should be a long, random string that is kept secret.
-SECRET_KEY = os.getenv("SECRET_KEY", "secret-getenvkey")
-
-# ALGORITHM specifies the algorithm used for JWT encoding/decoding.
-ALGORITHM = os.getenv("ALGORITHM", "HS256")
-
-# ACCESS_TOKEN_EXPIRE_MINUTES defines how long (in minutes) an access token remains valid.
-# Defaults to 30 minutes.
-ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 30))
-
-# ADMIN_USER and ADMIN_PASSWORD are placeholder credentials for basic authentication
-# in this example. In production, use a more secure authentication method.
-ADMIN_USER = os.getenv('ADMIN_USER', 'admin')
-ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD', 'ecret')
+FILL_COLOR = get_env_variable('FILL_COLOR', 'red')
+BACK_COLOR = get_env_variable('BACK_COLOR', 'white')
+SERVER_BASE_URL = get_env_variable('SERVER_BASE_URL', 'http://localhost:80')
+SERVER_DOWNLOAD_FOLDER = get_env_variable('SERVER_DOWNLOAD_FOLDER', 'downloads')
+SECRET_KEY = get_env_variable("SECRET_KEY", "secret-getenvkey")
+ALGORITHM = get_env_variable("ALGORITHM", "HS256")
+ACCESS_TOKEN_EXPIRE_MINUTES = int(get_env_variable("ACCESS_TOKEN_EXPIRE_MINUTES", 30))
+ADMIN_USER = get_env_variable('ADMIN_USER', 'admin')
+ADMIN_PASSWORD = get_env_variable('ADMIN_PASSWORD', 'secret')
